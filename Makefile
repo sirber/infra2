@@ -20,12 +20,12 @@ help:
 # desc: Build for Linux (output: build/infra)
 build:
 	@echo "Building for Linux (GOOS=linux, GOARCH=amd64)..."
-	@GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o $(OUTPUT) infra.go
+	@cd src/ && GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o ../$(OUTPUT) .
 	@command -v upx >/dev/null 2>&1 && upx -9 -q $(OUTPUT) >/dev/null 2>&1
 
 # desc: Run with ACTION=<action> (up, down, pull, backup, restart)
 run:
-	@go run . $$ACTION
+	@cd src/ && go run . $$ACTION
 
 # desc: Remove build output
 clean:
