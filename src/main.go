@@ -42,23 +42,25 @@ func main() {
 	switch action {
 	case "up":
 		fmt.Println("Starting infrastructure...")
-		// TODO
+		dockerUp()
 
 	case "down":
 		fmt.Println("Stopping infrastructure...")
-		// TODO
+		dockerDown()
 
 	case "pull":
 		fmt.Println("Pulling latest images...")
-		// TODO
+		dockerPull()
 
 	case "backup":
 		fmt.Println("Backing up data...")
-		// TODO
+		dockerDown()
+		backupData()
+		dockerUp()
 
 	case "restart":
 		fmt.Println("Restarting infrastructure...")
-		// TODO
+		dockerRestart()
 
 	case "version":
 		printVersion()
