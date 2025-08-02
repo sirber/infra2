@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 )
 
@@ -9,6 +11,31 @@ import (
 var (
 	Version = "dev"
 )
+
+// Config structure for infra.json
+type Config struct {
+	ArchiveName string `json:"archive_name"`
+}
+
+func ensureConfig(path string) (Config, error) {
+	var cfg Config
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return cfg, fmt.Errorf("%s not found", path)
+	}
+
+	// Read config
+	data, err := ioutil.ReadFile(path)
+	if err != nil {
+		return cfg, err
+	}
+
+	err = json.Unmarshal(data, &cfg)
+	if err != nil {
+		return cfg, err
+	}
+	
+	return cfg, nil
+}
 
 func showHelp() {
 	fmt.Println("Usage: infra <action>")
@@ -32,6 +59,13 @@ func main() {
 	printVersion()
 	fmt.Println()
 
+	configPath := "infra.json"
+	cfg, err := ensureConfig(configPath)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error loading config: %v\n", err)
+		os.Exit(1)
+	}
+
 	if len(os.Args) < 2 {
 		showHelp()
 		return
@@ -54,7 +88,7 @@ func main() {
 	case "backup":
 		fmt.Println("Backing up data...")
 		dockerDown()
-		backupData("backup.tar.gz") // TODO: make archive name configurable
+		backupData(cfg.ArchiveName)
 		dockerUp()
 
 	case "restart":
