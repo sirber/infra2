@@ -14,13 +14,15 @@ func showHelp() {
 	fmt.Println("Usage: infra <action>")
 	fmt.Println()
 	fmt.Println("Available actions:")
+	fmt.Println("  init    - Create default config file")
 	fmt.Println("  up      - Start the infrastructure")
+	fmt.Println("  start   - Stop running containers")
+	fmt.Println("  stop    - Start running containers")
 	fmt.Println("  down    - Stop the infrastructure")
 	fmt.Println("  pull    - Pull latest images")
 	fmt.Println("  backup  - Backup data")
 	fmt.Println("  restart - Restart the infrastructure")
 	fmt.Println("  version - Show version information")
-	fmt.Println("  init    - Create default config file")
 }
 
 func printVersion() {
@@ -34,6 +36,11 @@ func main() {
 	fmt.Println()
 
 	configPath := "infra.json"
+	cfg, err := ensureConfig(configPath)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error loading config: %v\n", err)
+		os.Exit(1)
+	}
 
 	if len(os.Args) < 2 {
 		showHelp()
@@ -45,22 +52,23 @@ func main() {
 	case "up":
 		fmt.Println("Starting infrastructure...")
 		dockerUp()
+	case "start":
+		fmt.Println("Starting infrastructure...")
+		dockerStart()
 	case "down":
 		fmt.Println("Stopping infrastructure...")
 		dockerDown()
+	case "stop":
+		fmt.Println("Stopping infrastructure...")
+		dockerStop()
 	case "pull":
 		fmt.Println("Pulling latest images...")
 		dockerPull()
 	case "backup":
 		fmt.Println("Backing up data...")
-		dockerDown()
-		cfg, err := ensureConfig(configPath)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error loading config: %v\n", err)
-			os.Exit(1)
-		}
+		dockerStop()
 		backupData(cfg.ArchiveName)
-		dockerUp()
+		dockerStart()
 	case "restart":
 		fmt.Println("Restarting infrastructure...")
 		dockerRestart()

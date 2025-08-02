@@ -65,3 +65,19 @@ func dockerRestart() {
 	dockerDown()
 	dockerUp()
 }
+
+func dockerStart() {
+	dirs, err := findEnabledDirs(".")
+	if err != nil {
+		log.Fatalf("Error scanning directories: %v", err)
+	}
+	runDockerComposeCmdInDirs(dirs, "start")
+}
+
+func dockerStop() {
+	dirs, err := findEnabledDirs(".")
+	if err != nil {
+		log.Fatalf("Error scanning directories: %v", err)
+	}
+	runDockerComposeCmdInDirs(dirs, "stop")
+}
