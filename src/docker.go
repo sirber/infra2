@@ -26,7 +26,7 @@ func findEnabledDirs(root string) ([]string, error) {
 
 func runDockerComposeCmdInDirs(dirs []string, args ...string) {
 	for _, dir := range dirs {
-		cmd := exec.Command("docker compose", args...)
+		cmd := exec.Command("docker", append([]string{"compose"}, args...)...)
 		cmd.Dir = dir
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
