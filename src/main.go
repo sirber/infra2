@@ -3,18 +3,15 @@ package main
 import (
 	"fmt"
 	"os"
-	"time"
 )
 
 // Version information. These can be set at build time using -ldflags.
 var (
 	Version = "dev"
-	Commit  = "none"
-	Date    = time.Now().UTC().Format(time.RFC3339)
 )
 
 func showHelp() {
-	fmt.Println("Usage: infra2 <action>")
+	fmt.Println("Usage: infra <action>")
 	fmt.Println()
 	fmt.Println("Available actions:")
 	fmt.Println("  up      - Start the infrastructure")
@@ -26,11 +23,13 @@ func showHelp() {
 }
 
 func printVersion() {
-	fmt.Printf("Version: %s\nCommit: %s\nDate: %s\n", Version, Commit, Date)
+	fmt.Println(Version)
 }
 
 func main() {
 	fmt.Println("Docker Self-Hosted Infra")
+	fmt.Printf("Version: ")
+	printVersion()
 	fmt.Println()
 
 	if len(os.Args) < 2 {
