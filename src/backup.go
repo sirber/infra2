@@ -10,8 +10,7 @@ import (
 	"syscall"
 )
 
-func backupData() {
-	archiveName := "backup.tar.gz"
+func backupData(archiveName string) {
 	outFile, err := os.Create(archiveName)
 	if err != nil {
 		log.Fatalf("Failed to create archive: %v", err)

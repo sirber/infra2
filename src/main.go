@@ -54,7 +54,7 @@ func main() {
 	case "backup":
 		fmt.Println("Backing up data...")
 		dockerDown()
-		backupData()
+		backupData("backup.tar.gz") // TODO: make archive name configurable
 		dockerUp()
 
 	case "restart":
