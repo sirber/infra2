@@ -1,9 +1,7 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 )
 
@@ -11,31 +9,6 @@ import (
 var (
 	Version = "dev"
 )
-
-// Config structure for infra.json
-type Config struct {
-	ArchiveName string `json:"archive_name"`
-}
-
-func ensureConfig(path string) (Config, error) {
-	var cfg Config
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return cfg, fmt.Errorf("%s not found", path)
-	}
-
-	// Read config
-	data, err := ioutil.ReadFile(path)
-	if err != nil {
-		return cfg, err
-	}
-
-	err = json.Unmarshal(data, &cfg)
-	if err != nil {
-		return cfg, err
-	}
-	
-	return cfg, nil
-}
 
 func showHelp() {
 	fmt.Println("Usage: infra <action>")
@@ -47,6 +20,7 @@ func showHelp() {
 	fmt.Println("  backup  - Backup data")
 	fmt.Println("  restart - Restart the infrastructure")
 	fmt.Println("  version - Show version information")
+	fmt.Println("  init    - Create default config file")
 }
 
 func printVersion() {
@@ -60,11 +34,6 @@ func main() {
 	fmt.Println()
 
 	configPath := "infra.json"
-	cfg, err := ensureConfig(configPath)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error loading config: %v\n", err)
-		os.Exit(1)
-	}
 
 	if len(os.Args) < 2 {
 		showHelp()
@@ -76,28 +45,30 @@ func main() {
 	case "up":
 		fmt.Println("Starting infrastructure...")
 		dockerUp()
-
 	case "down":
 		fmt.Println("Stopping infrastructure...")
 		dockerDown()
-
 	case "pull":
 		fmt.Println("Pulling latest images...")
 		dockerPull()
-
 	case "backup":
 		fmt.Println("Backing up data...")
 		dockerDown()
+		cfg, err := ensureConfig(configPath)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error loading config: %v\n", err)
+			os.Exit(1)
+		}
 		backupData(cfg.ArchiveName)
 		dockerUp()
-
 	case "restart":
 		fmt.Println("Restarting infrastructure...")
 		dockerRestart()
-
 	case "version":
 		printVersion()
-
+	case "init":
+		initConfig(configPath)
+		return
 	default:
 		fmt.Printf("Unknown action: %s\n\n", action)
 		showHelp()

@@ -4,9 +4,9 @@ import (
 	"archive/tar"
 	"compress/gzip"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
-	"log"
 	"syscall"
 )
 
@@ -28,11 +28,17 @@ func backupData(archiveName string) {
 		if err != nil {
 			return err
 		}
+
+		// Skip the archive file itself
+		if info.Name() == archiveName {
+			return nil
+		}
+
 		hdr, err := tar.FileInfoHeader(info, path)
 		if err != nil {
 			return err
 		}
-		
+
 		// Set correct name in archive (relative path)
 		relPath, err := filepath.Rel(root, path)
 		if err != nil {
@@ -63,7 +69,7 @@ func backupData(archiveName string) {
 				return err
 			}
 		}
-		
+
 		return nil
 	})
 }
