@@ -67,8 +67,8 @@ func main() {
 		fmt.Println("Pulling latest images...")
 		dockerPull()
 	case "backup":
-		fmt.Println("Backing up data...")
 		dockerStop()
+		fmt.Println("Backing up data...")
 		backupData(cfg.ArchiveName)
 		dockerStart()
 	case "restart":

@@ -68,8 +68,10 @@ func backupData(archiveName string) {
 			if _, err := io.Copy(tarWriter, file); err != nil {
 				return err
 			}
+			os.Printf(".")
 		}
 
+		os.Println()
 		return nil
 	})
 }
