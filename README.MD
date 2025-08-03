@@ -10,7 +10,7 @@ the other for `services/`.
 A binary is automatically compiled by GitHub.
 
 - Download [latest release](https://github.com/sirber/docker-infra/releases)
-  - example: `wget -O infra https://github.com/sirber/docker-infra/releases/download/0.2.2/infra` 
+  - example: `wget -O infra https://github.com/sirber/docker-infra/releases/download/0.3.0/infra` 
 - Move the downloaded binary `infra` to a folder in path
 - Make it executable: `chmod a+x infra`
 
