@@ -81,3 +81,64 @@ func dockerStop() {
 	}
 	runDockerComposeCmdInDirs(dirs, "stop")
 }
+
+func getComposeFilesFromEnabledDirs() ([]string, error) {
+	dirs, err := findEnabledDirs(".")
+	if err != nil {
+		return nil, err
+	}
+	var composeFiles []string
+	for _, dir := range dirs {
+		composePath := filepath.Join(dir, "docker-compose.yml")
+		if _, err := os.Stat(composePath); err == nil {
+			composeFiles = append(composeFiles, composePath)
+		}
+	}
+	return composeFiles, nil
+}
+
+func dockerStatus() {
+	composeFiles, err := getComposeFilesFromEnabledDirs()
+	if err != nil {
+		log.Fatalf("Error scanning directories: %v", err)
+	}
+	if len(composeFiles) == 0 {
+		log.Println("No docker-compose.yml files found in enabled folders.")
+		return
+	}
+	args := []string{"compose"}
+	for _, f := range composeFiles {
+		args = append(args, "-f", f)
+	}
+	args = append(args, "ps")
+	cmd := exec.Command("docker", args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	log.Printf("Running 'docker %v'", args)
+	if err := cmd.Run(); err != nil {
+		log.Printf("Error running docker compose ps: %v", err)
+	}
+}
+
+func dockerLogs() {
+	composeFiles, err := getComposeFilesFromEnabledDirs()
+	if err != nil {
+		log.Fatalf("Error scanning directories: %v", err)
+	}
+	if len(composeFiles) == 0 {
+		log.Println("No docker-compose.yml files found in enabled folders.")
+		return
+	}
+	args := []string{"compose"}
+	for _, f := range composeFiles {
+		args = append(args, "-f", f)
+	}
+	args = append(args, "logs", "-f") // follow logs
+	cmd := exec.Command("docker", args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	log.Printf("Running 'docker %v'", args)
+	if err := cmd.Run(); err != nil {
+		log.Printf("Error running docker compose logs: %v", err)
+	}
+}
