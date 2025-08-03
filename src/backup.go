@@ -3,8 +3,8 @@ package main
 import (
 	"archive/tar"
 	"compress/gzip"
-	"io"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path/filepath"

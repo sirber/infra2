@@ -22,8 +22,6 @@ func showHelp() {
 	fmt.Println("  pull    - Pull latest images")
 	fmt.Println("  backup  - Backup data")
 	fmt.Println("  restart - Restart the infrastructure")
-	fmt.Println("  status  - Show status of all enabled services")
-	fmt.Println("  logs    - Show logs of all enabled services")
 	fmt.Println("  version - Show version information")
 }
 
@@ -74,12 +72,6 @@ func main() {
 	case "restart":
 		fmt.Println("Restarting infrastructure...")
 		dockerRestart()
-	case "status":
-		fmt.Println("Showing status of all enabled services...")
-		dockerStatus()
-	case "logs":
-		fmt.Println("Showing logs of all enabled services...")
-		dockerLogs()
 	case "version":
 		printVersion()
 	case "init":
