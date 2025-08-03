@@ -27,6 +27,9 @@ func backupData(archiveName string) {
 	root := "."
 	filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
+			if os.IsPermission(err) {
+				return nil // skip files/dirs with no permission
+			}
 			return err
 		}
 
@@ -63,6 +66,9 @@ func backupData(archiveName string) {
 		if info.Mode().IsRegular() {
 			file, err := os.Open(path)
 			if err != nil {
+				if os.IsPermission(err) {
+					return nil // skip files with no permission
+				}
 				return err
 			}
 			defer file.Close()

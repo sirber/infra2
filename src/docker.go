@@ -11,8 +11,13 @@ func findEnabledDirs(root string) ([]string, error) {
 	var dirs []string
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
-			return err
+			// Skip directories/files we can't access
+			if os.IsPermission(err) {
+				return filepath.SkipDir
+			}
+			return nil
 		}
+		
 		if info.IsDir() {
 			enabledPath := filepath.Join(path, "enabled")
 			if _, err := os.Stat(enabledPath); err == nil {
@@ -97,6 +102,9 @@ func getComposeFilesFromEnabledDirs() ([]string, error) {
 		composePath := filepath.Join(dir, "docker-compose.yml")
 		if _, err := os.Stat(composePath); err == nil {
 			composeFiles = append(composeFiles, composePath)
+		} else if os.IsPermission(err) {
+			// Skip files we can't access
+			continue
 		}
 	}
 	return composeFiles, nil
