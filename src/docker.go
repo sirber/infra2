@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-func findEnabledDirs(root string) ([]string, error) {
+func findEnabledDirs(root string, all bool) ([]string, error) {
 	var dirs []string
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -19,9 +19,13 @@ func findEnabledDirs(root string) ([]string, error) {
 		}
 
 		if info.IsDir() {
-			enabledPath := filepath.Join(path, "enabled")
-			if _, err := os.Stat(enabledPath); err == nil {
+			if all {
 				dirs = append(dirs, path)
+			} else {
+				enabledPath := filepath.Join(path, "enabled")
+				if _, err := os.Stat(enabledPath); err == nil {
+					dirs = append(dirs, path)
+				}
 			}
 		}
 		return nil
@@ -43,7 +47,7 @@ func runDockerComposeCmdInDirs(dirs []string, args ...string) {
 }
 
 func dockerUp() {
-	dirs, err := findEnabledDirs(".")
+	dirs, err := findEnabledDirs(".", false)
 	if err != nil {
 		fmt.Printf("Error scanning directories: %v\n", err)
 		os.Exit(1)
@@ -52,7 +56,7 @@ func dockerUp() {
 }
 
 func dockerDown() {
-	dirs, err := findEnabledDirs(".")
+	dirs, err := findEnabledDirs(".", true)
 	if err != nil {
 		fmt.Printf("Error scanning directories: %v\n", err)
 		os.Exit(1)
@@ -61,7 +65,7 @@ func dockerDown() {
 }
 
 func dockerPull() {
-	dirs, err := findEnabledDirs(".")
+	dirs, err := findEnabledDirs(".", false)
 	if err != nil {
 		fmt.Printf("Error scanning directories: %v\n", err)
 		os.Exit(1)
@@ -75,7 +79,7 @@ func dockerRestart() {
 }
 
 func dockerStart() {
-	dirs, err := findEnabledDirs(".")
+	dirs, err := findEnabledDirs(".", false)
 	if err != nil {
 		fmt.Printf("Error scanning directories: %v\n", err)
 		os.Exit(1)
@@ -84,7 +88,7 @@ func dockerStart() {
 }
 
 func dockerStop() {
-	dirs, err := findEnabledDirs(".")
+	dirs, err := findEnabledDirs(".", true)
 	if err != nil {
 		fmt.Printf("Error scanning directories: %v\n", err)
 		os.Exit(1)
