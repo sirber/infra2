@@ -78,7 +78,8 @@ func backupData(archiveName string) {
 			fmt.Printf(".")
 		}
 
-		fmt.Println()
 		return nil
 	})
+
+	fmt.Println()
 }
