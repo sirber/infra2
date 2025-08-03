@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"compress/gzip"
 	"io"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -68,10 +69,10 @@ func backupData(archiveName string) {
 			if _, err := io.Copy(tarWriter, file); err != nil {
 				return err
 			}
-			os.Printf(".")
+			fmt.Printf(".")
 		}
 
-		os.Println()
+		fmt.Println()
 		return nil
 	})
 }
