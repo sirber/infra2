@@ -18,16 +18,26 @@ func findEnabledDirs(root string, all bool) ([]string, error) {
 			return nil
 		}
 
-		if info.IsDir() {
-			if all {
+		if info.IsDir() == false {
+			return nil
+		}
+
+		// Look for docker-compose.yml in the directory
+		dockerPath := filepath.Join(path, "docker-compose.yml")
+		if _, err := os.Stat(dockerPath); err != nil {
+			return nil
+		}
+
+		// If 'all' is true, include the service regardless of 'enabled'
+		if all {
+			dirs = append(dirs, path)
+		} else {
+			enabledPath := filepath.Join(path, "enabled")
+			if _, err := os.Stat(enabledPath); err == nil {
 				dirs = append(dirs, path)
-			} else {
-				enabledPath := filepath.Join(path, "enabled")
-				if _, err := os.Stat(enabledPath); err == nil {
-					dirs = append(dirs, path)
-				}
 			}
 		}
+
 		return nil
 	})
 	return dirs, err
