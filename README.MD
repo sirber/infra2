@@ -10,6 +10,7 @@ the other for `services/`.
 A binary is automatically compiled by GitHub.
 
 - Download [latest release](https://github.com/sirber/infra2/releases)
+  - example: `wget -O infra https://github.com/sirber/infra2/releases/download/0.2.2/infra` 
 - Move the downloaded binary `infra` to a folder in path
 - Make it executable: `chmod a+x infra`
 
